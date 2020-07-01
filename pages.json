@@ -1,0 +1,69 @@
+{
+	"pages": [
+		{
+		    "path" : "pages/login/login",
+		    "style" : {}
+		},
+		{
+			"path": "pages/index/index",
+			"text": "首页",
+			"style": {
+				"navigationBarBackgroundColor": "#267cfb",
+				"enablePullDownRefresh":true
+			}
+		}, 
+		{
+		    "path" : "pages/userInfo/userInfo",
+		    "style" : {
+				"navigationBarBackgroundColor": "#267cfb"
+			}
+		},
+		{
+		    "path" : "pages/editInfo/editInfo",
+		    "style" : {}
+		},
+		{
+		    "path" : "pages/updatePasswd/updatePasswd",
+		    "style" : {
+				"navigationBarBackgroundColor": "#267cfb",
+				"navigationBarTextStyle":"#FFFFFF",
+				"navigationBarTitleText":"修改密码"
+			}
+		},
+		{
+		    "path" : "pages/writeRealList/writeRealList",
+		    "style" : {
+				"navigationBarBackgroundColor": "#267cfb",
+				"onReachBottomDistance":50
+			}
+		}
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarBackgroundColor": "#ffffff"
+	},
+	"tabBar":{
+		"selectedColor":"#267cfb",
+		"iconWidth":"18px",
+		"list":[
+			{
+				"text":"工作台",
+				"pagePath":"pages/index/index",
+				"iconPath":"static/img/work.png",
+				"selectedIconPath":"static/img/work.png"
+			},
+			{
+				"text":"",
+				"pagePath":"pages/editInfo/editInfo",
+				"iconPath":"static/img/edit.png",
+				"selectedIconPath":"static/img/edit.png"
+			},
+			{
+				"text":"我的",
+				"pagePath":"pages/userInfo/userInfo",
+				"iconPath":"static/img/person.png",
+				"selectedIconPath":"static/img/person.png"
+			}
+		]
+	}
+}
