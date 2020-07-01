@@ -18,7 +18,9 @@ const url = {
 	//获取车间列表
 	getDepartList:'/wx/sys/getDepartList.exjson',
 	//获取所有问题类别
-	getProblemTypes:'/wx/writeProblem/getProblemTypes.exjson',	
+	getProblemTypes:'/wx/writeProblem/getProblemTypes.exjson',
+	//查询写实管理分页列表页面
+	getWriteRealList:'/wx/writeReal/getWriteRealList.exjson'
 }
 
 export default url

@@ -19,7 +19,7 @@
 		</scroll-view>
 		<!-- 二级 -->
 		<scroll-view class="lv-two" scroll-y="true">
-			<ul>
+			<ul  v-show="checkedDId != -1 && workarea.length > 0">
 				<li @click="checkWorkArea(-1,-1)" :class="{checked:checkedWId == -1 }">
 					<text>全部</text>
 				</li>

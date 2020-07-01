@@ -36,9 +36,25 @@
 		</view>
 		<view class="type-item">
 			<view class="type-title">违标类别</view>
+			<view class="type-button">
+				<view>
+					<view :class="{checked:checkedproblemTypeId == -1}" @click="checkProblemType(-1,-1)">全部</view>
+				</view>
+				<view v-for="(item,index) in problemTypes" :key="item.problemTypeId" >
+					<view @click="checkProblemType(item.problemTypeId,index)" :class="{checked:checkedproblemTypeId == item.problemTypeId}" >{{item.problemTypeName}}</view>
+				</view>
+			</view>
 		</view>
-		<view class="type-item">
+		<view class="type-item"  v-show="checkedproblemTypeId != -1 && problemItems.length > 0">
 			<view class="type-title">违标条款</view>
+			<view class="type-button">
+				<view>
+					<view :class="{checked:checkedproblemItemId == -1}" @click="checkProblemItem(-1,-1)">全部</view>
+				</view>
+				<view v-for="(item,index) in problemItems" :key="item.itemId"  >
+					<view @click="checkProblemItem(item.itemId,index)" :class="{checked:checkedproblemItemId == item.itemId}">{{item.itemName}}</view>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>
@@ -47,19 +63,41 @@
 	export default {
 		data(){
 			return{
-				
+				problemTypes:[],
+				problemItems:[],
+				checkedproblemTypeId: -1,
+				checkedproblemItemId: -1
 			}
 		},
 		methods:{
-			
+			checkProblemType(problemTypeId,index){
+				if(index === -1){
+					this.problemItems = [];
+				} else{	
+					this.problemItems = this.problemTypes[index].problemItems;
+				}
+				this.checkedproblemTypeId = problemTypeId;
+				this.checkedproblemItemId = -1;
+			},
+			checkProblemItem(problemItemId,index){
+				this.checkedproblemItemId = problemItemId;
+			},
 		},
 		// 加载
-		onLoad() {
-			
-		},
-		//展示
-		onShow() {
-			
+		created() {
+			//获取组织架构
+			this.$http.request({
+				url:this.$url.getProblemTypes
+			}).then(res => {
+				if(res.errcode == 1){
+					this.problemTypes = res.data.problemTypes
+				} else {
+					uni.showToast({
+						icon:'none',
+						title:'获取问题类型失败'
+					})
+				}
+			})
 		}
 	}
 </script>
@@ -84,7 +122,7 @@
 			width: 100%;
 			>view{
 				width: 33.3%;
-				height: 90rpx;
+				height: 80rpx;
 				padding: 0rpx 30rpx;
 				view{
 					min-width: 150rpx;
@@ -95,6 +133,11 @@
 					background: #b4b4b4;
 					border-radius: 6rpx;
 					text-align: center;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					overflow: hidden;
+					word-break: break-all;
+					padding: 0px 10rpx;
 				}
 			}
 		}

@@ -16,11 +16,14 @@
 		</view>
 		<!-- 抽屉 -->
 		<view>
+			<!-- 抽屉 工区 -->
 			<uni-drawer ref="departDrawer" width="650rpx" top="75rpx">
 			    <view style="height: 100%;">
 					<departInfo></departInfo>
 			    </view>
 			</uni-drawer>
+			<!-- 工区时间 -->
+			<analyzeTime ref="timeDrawer "></analyzeTime>
 			<!-- 抽屉 问题类型 -->
 			<uni-drawer ref="typeDrawer" width="650rpx" mode="right" top="75rpx">
 			    <view style="height: 100%;">
@@ -43,8 +46,9 @@
 	import uniDrawer from "@/components/uni-drawer/uni-drawer.vue"
 	import departInfo from "./departInfo.vue"
 	import problemType from "./problemType.vue"
+	import analyzeTime from "./analyzeTime.vue"
 	export default {
-		components: {uniDrawer,departInfo,problemType},
+		components: {uniDrawer,departInfo,problemType,analyzeTime},
 		data(){
 			return{
 				rowData:{},
@@ -60,7 +64,8 @@
 				this.timeLine=false,
 				this.typeLine=false
 				this.$refs.typeDrawer.close();
-				this.$refs.departDrawer.open()
+				this.$refs.departDrawer.open();
+				this.$refs.timeDrawer.close();
 			},
 			//打开问题类型查询条件type
 			drawerType(){
@@ -68,7 +73,17 @@
 				this.timeLine=false,
 				this.typeLine=true
 				this.$refs.departDrawer.close();
-				this.$refs.typeDrawer.open()
+				this.$refs.typeDrawer.open();
+				this.$refs.timeDrawer.close();
+			},
+			//打开问题类型查询条件type
+			drawerTime(){
+				this.departLine=false,
+				this.timeLine=true,
+				this.typeLine=false
+				this.$refs.departDrawer.close();
+				this.$refs.typeDrawer.close();
+				this.$refs.timeDrawer.open();
 			}
 		},
 		// 加载
