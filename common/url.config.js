@@ -9,8 +9,6 @@ const url = {
 	getUserRationReport:'/wx/writeReal/getUserRationReport.exjson',	
 	//获取当前用户最近5条记录
 	getTopWriteReals:'/wx/writeReal/getTopWriteReals.exjson',
-	//查询写实管理分页列表页面
-	getWriteRealList:'/wx/writeReal/getWriteRealList.exjson',
 	//判断token有效期
 	checkLogin:'/wx/auth/checkLogin.exjson',
 	//修改密码

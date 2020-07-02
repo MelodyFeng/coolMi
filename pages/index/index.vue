@@ -155,8 +155,15 @@
 							data:{
 								statMonth:this.statMonth
 							},
-						}).then(res =>{
-							this.rowData = res.data.rows;
+						}).then(res =>{ 
+							if(res.errcode == 1){
+								this.rowData = res.data.rows;	
+							} else{
+								uni.showToast({
+									icon:'none',
+									title:res.message
+								})
+							}
 						})
 			},
 			//改变时间
