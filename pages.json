@@ -36,6 +36,14 @@
 				"navigationBarBackgroundColor": "#267cfb",
 				"onReachBottomDistance":50
 			}
+		},
+		{
+		    "path" : "pages/writeRealDetail/writeRealDetail",
+		    "style" : {
+				"navigationBarBackgroundColor": "#267cfb",
+				"navigationBarTextStyle":"#FFFFFF",
+				"navigationBarTitleText":"问题详情"
+			}
 		}
     ],
 	"globalStyle": {

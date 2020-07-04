@@ -4,13 +4,13 @@
 			<view class="type-title">是否违标</view>
 			<view class="type-button">
 				<view>
-					<view class="checked">全部</view>
+					<view @click="checkIsMisbrand('')" :class="{checked:isMisbrandId === ''}">全部</view>
 				</view>
 				<view>
-					<view>违标</view>
+					<view @click="checkIsMisbrand(1)" :class="{checked:isMisbrandId === 1}">违标</view>
 				</view>
 				<view>
-					<view>不违标</view>
+					<view @click="checkIsMisbrand(0)" :class="{checked:isMisbrandId === 0}">不违标</view>
 				</view>
 			</view>
 		</view>
@@ -18,19 +18,19 @@
 			<view class="type-title">违标级别</view>
 			<view class="type-button">
 				<view>
-					<view>全部</view>
+					<view @click="checkProblemLevel('')" :class="{checked:problemLevelId == ''}">全部</view>
 				</view>
 				<view>
-					<view>H</view>
+					<view @click="checkProblemLevel(1)" :class="{checked:problemLevelId == 1}">H</view>
 				</view>
 				<view>
-					<view>A</view>
+					<view @click="checkProblemLevel(2)" :class="{checked:problemLevelId == 2}">A</view>
 				</view>
 				<view>
-					<view>B</view>
+					<view @click="checkProblemLevel(3)" :class="{checked:problemLevelId == 3}">B</view>
 				</view>
 				<view>
-					<view>C</view>
+					<view @click="checkProblemLevel(4)" :class="{checked:problemLevelId == 4}">C</view>
 				</view>
 			</view>
 		</view>
@@ -38,22 +38,30 @@
 			<view class="type-title">违标类别</view>
 			<view class="type-button">
 				<view>
-					<view :class="{checked:checkedproblemTypeId == -1}" @click="checkProblemType(-1,-1)">全部</view>
+					<view :class="{checked:checkedproblemTypeId === ''}" @click="checkProblemType('','')">全部</view>
 				</view>
 				<view v-for="(item,index) in problemTypes" :key="item.problemTypeId" >
 					<view @click="checkProblemType(item.problemTypeId,index)" :class="{checked:checkedproblemTypeId == item.problemTypeId}" >{{item.problemTypeName}}</view>
 				</view>
 			</view>
 		</view>
-		<view class="type-item"  v-show="checkedproblemTypeId != -1 && problemItems.length > 0">
+		<view class="type-item"  v-show="checkedproblemTypeId !== '' && problemItems.length > 0">
 			<view class="type-title">违标条款</view>
 			<view class="type-button">
 				<view>
-					<view :class="{checked:checkedproblemItemId == -1}" @click="checkProblemItem(-1,-1)">全部</view>
+					<view :class="{checked:checkedproblemItemId === ''}" @click="checkProblemItem('','')">全部</view>
 				</view>
 				<view v-for="(item,index) in problemItems" :key="item.itemId"  >
 					<view @click="checkProblemItem(item.itemId,index)" :class="{checked:checkedproblemItemId == item.itemId}">{{item.itemName}}</view>
 				</view>
+			</view>
+		</view>
+		<view class="time-btn">
+			<view style="background: #FFFFFF;border-top: 1px solid #d2d2d2;" @click="resetType">
+				<text>重 置</text>
+			</view>
+			<view style="background: #267cfb;color: #FFFFFF;" @click="confirmType">
+				<text>确 定</text>
 			</view>
 		</view>
 	</view>
@@ -65,23 +73,45 @@
 			return{
 				problemTypes:[],
 				problemItems:[],
-				checkedproblemTypeId: -1,
-				checkedproblemItemId: -1
+				checkedproblemTypeId: '',
+				checkedproblemItemId: '',
+				isMisbrandId: '',
+				problemLevelId: ''
 			}
 		},
 		methods:{
 			checkProblemType(problemTypeId,index){
-				if(index === -1){
+				if(index == ''){
 					this.problemItems = [];
 				} else{	
 					this.problemItems = this.problemTypes[index].problemItems;
 				}
 				this.checkedproblemTypeId = problemTypeId;
-				this.checkedproblemItemId = -1;
+				this.checkedproblemItemId = '';
 			},
 			checkProblemItem(problemItemId,index){
 				this.checkedproblemItemId = problemItemId;
 			},
+			checkIsMisbrand(id){
+				this.isMisbrandId = id;
+			},
+			checkProblemLevel(id){
+				this.problemLevelId = id;
+			},
+			resetType(){
+				this.checkedproblemTypeId = '',
+				this.checkedproblemItemId = '',
+				this.isMisbrandId = '',
+				this.problemLevelId = ''
+			},
+			confirmType(){
+				this.$emit('setSearchParam',{
+					isMisbrand:this.isMisbrandId,//是否违标
+					problemLevel:this.problemLevelId,//违标级别
+					problemTypeId:this.checkedproblemTypeId,//违标类别
+					itemId:this.checkedproblemTypeId,//违标条款
+				});
+			}
 		},
 		// 加载
 		created() {
@@ -103,6 +133,12 @@
 </script>
 
 <style lang="scss">
+	.container{
+		overflow-y: auto;
+		height: 100%;
+		padding-bottom: 40rpx;
+	}
+	
 	.type-item{
 		padding: 10rpx 20rpx;
 		.type-title{
@@ -146,6 +182,19 @@
 	.checked{
 		background: $myBlue !important;
 		color: #FFFFFF  !important;
+	}
+	
+	.time-btn{
+		display: flex;
+		position: absolute;
+		bottom: 0rpx;
+		height: 60rpx;
+		width: 100%;
+		text-align: center;
+		view{
+			flex: 1;
+			line-height: 60rpx;
+		}
 	}
 </style>
 

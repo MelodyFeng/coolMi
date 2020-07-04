@@ -18,7 +18,9 @@ const url = {
 	//获取所有问题类别
 	getProblemTypes:'/wx/writeProblem/getProblemTypes.exjson',
 	//查询写实管理分页列表页面
-	getWriteRealList:'/wx/writeReal/getWriteRealList.exjson'
+	getWriteRealList:'/wx/writeReal/getWriteRealList.exjson',
+	//获取写实详情成功
+	getWriteRealById:'/wx/writeReal/getWriteRealById.exjson'
 }
 
 export default url

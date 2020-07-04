@@ -1,12 +1,12 @@
 <template>
-	<view class="container">
+	<view :class="{containerList:hiddenFlag}">
 		<view class="searchBar">
 			<view @click="drawerDepart">
-				<text>分析工区</text>
+				<text>{{paramName.analyzeDepartName}}</text>
 				<view class="blueLine" v-show="departLine"></view>
 			</view>
 			<view @click="drawerTime">
-				<text>分析时间</text>
+				<text :style="{'line-height':paramName.analyzeTime != '分析时间'?'30rpx':'65rpx'}">{{paramName.analyzeTime}}</text>
 				<view class="blueLine" v-show="timeLine"></view>
 			</view>
 			<view @click="drawerType">
@@ -17,23 +17,23 @@
 		<!-- 抽屉 -->
 		<view>
 			<!-- 抽屉 工区 -->
-			<uni-drawer ref="departDrawer" width="650rpx" top="75rpx">
+			<uni-drawer ref="departDrawer" width="650rpx" top="75rpx" @closeDrawer="closeDrawer" v-show="departLine">
 			    <view style="height: 100%;">
-					<departInfo></departInfo>
+					<departInfo @setSearchParam="setSearchParam"></departInfo>
 			    </view>
 			</uni-drawer>
 			<!-- 工区时间 -->
-			<analyzeTime ref="timeDrawer" top="75rpx"></analyzeTime>
+			<analyzeTime ref="timeDrawer" top="75rpx" @closeDrawer="closeDrawer" @setSearchParam="setSearchParam"></analyzeTime>
 			<!-- 抽屉 问题类型 -->
-			<uni-drawer ref="typeDrawer" width="650rpx" mode="right" top="75rpx">
+			<uni-drawer ref="typeDrawer" width="650rpx" mode="right" top="75rpx" @closeDrawer="closeDrawer" v-show="typeLine">
 			    <view style="height: 100%;">
-			        <problemType></problemType>
+			        <problemType @setSearchParam="setSearchParam"></problemType>
 			    </view>
 			</uni-drawer>
 		</view>
 		<view class="card-box">
 			<view v-for="(item,index) in rowData" :key="item.realId">
-				<uni-card :title="item.isMisbrand == 1?item.problemItemName:'无标注问题'" is-shadow>
+				<uni-card @click="showDetail(item.realId)" :title="item.isMisbrand == 1?item.problemItemName:'无违标问题'" is-shadow>
 					<view class="card-content" style="float: left;width: 400rpx;">{{item.departName}}</view>
 					<view class="card-content" style="float: right;">{{formatDate(item.analyzeDate)}}</view>
 				</uni-card>
@@ -69,7 +69,12 @@
 				departLine:false,
 				timeLine:false,
 				typeLine:false,
-				lastPageFlag:false
+				lastPageFlag:false,
+				hiddenFlag:false,
+				paramName:{
+					analyzeDepartName:'分析工区',
+					analyzeTime:'分析时间'
+				}
 			}
 		},
 		methods:{
@@ -102,30 +107,39 @@
 			},
 			//打开分析工区查询条件
 			drawerDepart(){
-				this.departLine=true,
-				this.timeLine=false,
-				this.typeLine=false
-				this.$refs.typeDrawer.close();
 				this.$refs.departDrawer.open();
-				this.$refs.timeDrawer.close();
+				if(this.typeLine){
+					this.$refs.typeDrawer.close();
+				}
+				if(this.timeLine){
+					this.$refs.timeDrawer.close();
+				}
+				this.departLine = true;
+				this.hiddenFlag = true;
 			},
 			//打开问题类型查询条件type
 			drawerType(){
-				this.departLine=false,
-				this.timeLine=false,
-				this.typeLine=true
-				this.$refs.departDrawer.close();
+				if(this.departLine){
+					this.$refs.departDrawer.close();
+				}
+				if(this.timeLine){
+					this.$refs.timeDrawer.close();
+				}
 				this.$refs.typeDrawer.open();
-				this.$refs.timeDrawer.close();
+				this.typeLine = true;
+				this.hiddenFlag = true;
 			},
 			//打开问题类型查询条件type
 			drawerTime(){
-				this.departLine=false,
-				this.timeLine=true,
-				this.typeLine=false
-				this.$refs.departDrawer.close();
-				this.$refs.typeDrawer.close();
 				this.$refs.timeDrawer.open();
+				if(this.departLine){
+					this.$refs.departDrawer.close();
+				}
+				if(this.typeLine){
+					this.$refs.typeDrawer.close();
+				}
+				this.timeLine=true;
+				this.hiddenFlag = true;
 			},
 			//搜索写实列表
 			searchList(){
@@ -153,15 +167,58 @@
 						})
 					}				
 				})
+			},
+			closeDrawer(){
+				this.departLine = false;
+				this.timeLine = false;
+				this.typeLine = false;
+				this.hiddenFlag = false;
+			},
+			//设置搜索条件
+			setSearchParam(obj){
+				this.$refs.departDrawer.close();
+				this.$refs.timeDrawer.close();
+				this.$refs.typeDrawer.close();
+				//清空查询数据
+				this.lastPageFlag = false;
+				this.rowData = [];
+				this.oldRowData = [];
+				if(obj.analyzeStartDate){
+					this.searchParam.analyzeStartDate = obj.analyzeStartDate;
+				}
+				if(obj.analyzeEndDate){
+					this.searchParam.analyzeEndDate = obj.analyzeEndDate;
+					this.paramName.analyzeTime = obj.analyzeStartDate +'\n' +obj.analyzeEndDate;
+				}
+				if(obj.analyzeDepartId){
+					this.searchParam.analyzeDepartId = obj.analyzeDepartId;
+					this.paramName.analyzeDepartName = obj.analyzeDepartName;
+				}
+				if(obj.isMisbrand){
+					this.searchParam.isMisbrand = obj.isMisbrand;
+				}				
+				if(obj.problemLevel){
+					this.searchParam.problemLevel = obj.problemLevel;
+				}
+				if(obj.problemTypeId){
+					this.searchParam.problemTypeId = obj.problemTypeId;
+				}
+				if(obj.itemId){
+					this.searchParam.itemId = obj.itemId;
+				}
+				this.searchParam.page = 1
+				this.searchList()
+			},
+			//展示详情
+			showDetail(realId){
+				uni.navigateTo({
+					url:'/pages/writeRealDetail/writeRealDetail?realId='+realId
+				})
 			}
 		},
 		// 加载
 		onLoad() {
 			this.searchList();
-		},
-		//展示
-		onShow() {
-			
 		},
 		//触底触发
 		onReachBottom(){
@@ -173,21 +230,41 @@
 <style lang="scss">
 	page{
 		background-color: $gayBgc;
+		height: 100%;
 	}
+	
+	.containerList{
+		height: 100%;
+		overflow: hidden;
+	}
+	
 	.searchBar{
 		display: flex;
 		width: 750rpx;
 		height: 65rpx;
 		line-height: 65rpx;
 		background-color: #FFFFFF;
+		position: fixed;
+		top: 0rpx;
+		width: 100%;
+		z-index: 9999;
 		> view{
-			flex: 1;
+			width: 33.3%;
 			text-align: center;
-			height: 25rpx;
-			font-size: 25rpx;
+			height: 50rpx;
 			font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
 			font-weight: 400;
 			color: #000000;
+			position: relative;
+			text{
+				font-size: 25rpx;
+				width: 100%;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				word-break: break-all;
+				display: inline-block;
+			}
 		}
 	}
 	
@@ -197,6 +274,13 @@
 		width: 156rpx;
 		height: 10rpx;
 		flex: 1;
+		position: absolute;
+		top: 65rpx;
+		left: -5rpx;
+	}
+	
+	.card-box{
+		padding-top: 70rpx;
 	}
 	
 	.card-content{

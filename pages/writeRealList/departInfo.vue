@@ -3,7 +3,7 @@
 		<!-- 一级 -->
 		<scroll-view class="lv-one" scroll-y="true">
 			<ul>
-				<li :class="{checked:checkedDId == -1 }" @click="checkDepart(-1,-1)">
+				<li :class="{checked:checkedDId == -1 }" @click="checkDepart(-1,-1,'全部')">
 					<text>全部</text>
 				</li>
 				<li 
@@ -11,7 +11,7 @@
 				:class="{checked:checkedDId == item.departId}" 
 				:style="{'line-height':item.departName.length < 9?'80rpx':'35rpx'}" 
 				:key="item.departId"
-				@click="checkDepart(item.departId,index)"
+				@click="checkDepart(item.departId,index,item.departName)"
 				>
 					<text>{{item.departName}}</text>
 				</li>
@@ -19,15 +19,15 @@
 		</scroll-view>
 		<!-- 二级 -->
 		<scroll-view class="lv-two" scroll-y="true">
-			<ul  v-show="checkedDId != -1 && workarea.length > 0">
-				<li @click="checkWorkArea(-1,-1)" :class="{checked:checkedWId == -1 }">
+			<ul v-show="checkedDId != -1 && workarea.length > 0">
+				<li @click="checkWorkArea(-1,-1,'全部')" :class="{checked:checkedWId == -1 }">
 					<text>全部</text>
 				</li>
 				<li 
 				v-for="(item,index) in workarea" 
 				:key="item.departId" 
 				:class="{checked:checkedWId == item.departId}"
-				@click="checkWorkArea(item.departId,index)"
+				@click="checkWorkArea(item.departId,index,item.departName)"
 				>
 					<text>
 						{{item.departName}}
@@ -45,21 +45,40 @@
 				departs:[],
 				workarea:[],
 				checkedDId:-1,
-				checkedWId:-1
+				checkedWId:'',
 			}
 		},
 		methods:{
-			checkDepart(id,index){
+			checkDepart(id,index,name){
 				if(index === -1){
 					this.workarea = [];
+					this.confirmDepart('',name);
+					return
 				} else{	
 					this.workarea = this.departs[index].children;
+					if(this.workarea.length == 0){
+						this.confirmDepart(id,name);
+						return
+					} else {
+						this.checkedDId = id;
+						this.checkedWId = '';
+					}
 				}
-				this.checkedDId = id;
-				this.checkedWId = -1;
 			},
-			checkWorkArea(id,index){
+			checkWorkArea(id,index,name){
 				this.checkedWId = id;
+				if(id == -1){
+					this.confirmDepart(this.checkedDId,name);
+				}else{
+					this.confirmDepart(id,name);
+				}
+				
+			},
+			confirmDepart(id,name){
+				this.$emit('setSearchParam',{
+					analyzeDepartId:name,//分析工区名
+					analyzeDepartId:id//分析工区Id
+				});
 			},
 		},
 		// 加载

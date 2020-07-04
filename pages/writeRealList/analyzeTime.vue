@@ -1,5 +1,5 @@
 <template>
-	<view class="container" v-if="visible" :style="{top:defaultTop}">
+	<view class="container" v-if="visible" :style="{top:defaultTop}" @click.self="close">
 		<view :style="{height:showTime?'300rpx':'0'}" class="time-content">
 			<view class="time-picker">
 				<view class="time-title">
@@ -16,7 +16,6 @@
 				<view>
 					<picker mode="multiSelector" :value="endIndex" class="" @change="bindEndChange" :range="timeRange">{{endTime}}</picker>
 				</view>
-
 			</view>
 			<view class="time-btn">
 				<view style="border-top: 1px solid #d2d2d2;" @click="resetTime">
@@ -92,15 +91,12 @@
 		methods:{
 			close() {
 				this.showTime = false
-				setTimeout(() => {
-					this.visible = false;
-				}, 100)
+				this.visible = false;
+				this.$emit('closeDrawer');
 			},
 			open() {
 				this.visible = true;
-				setTimeout(() => {
-					this.showTime = true
-				}, 100)
+				this.showTime = true
 			},
 			bindStartChange(e){
 				let oldStartIndex = this.startIndex;
@@ -129,7 +125,10 @@
 				this.endIndex = this.defaultEndIndex;				
 			},
 			confirmTime(){
-				
+				this.$emit('setSearchParam',{
+					analyzeStartDate: this.startTime,//分析开始时间
+					analyzeEndDate: this.endTime//分析结束时间
+				});
 			},
 			compareDate(date1,date2){
 				var oDate1 = new Date(date1);

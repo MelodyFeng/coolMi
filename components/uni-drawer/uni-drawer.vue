@@ -83,6 +83,7 @@
 		methods: {
 			close() {
 				this._change('showDrawer', 'visibleSync', false)
+				this.$emit('closeDrawer');
 			},
 			open() {
 				this._change('visibleSync', 'showDrawer', true)
